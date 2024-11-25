@@ -1,0 +1,211 @@
+# 【問題1 Google検索の自動検索ツールの開発】
+
+Google検索を立ち上げ、『AI Academy』と入力しエンタキーを自動で押す一連のプログラムを作成してください。<br>
+
+ヒント1: find_element_by_name()を利用し、検索フィールドを取得してください。<br>
+
+ヒント2:send_keys()にて取得した検索フィールドに、検索ワード（AI　Academy）を入力してください。<br>
+
+ヒント3: Keys.RETURNにて、検索ボタンを押してください。
+# 【OKバージョン】
+
+# browser_auto_foods.py
+from selenium import webdriver
+# from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service  # Serviceをインポート
+
+# # この方法で取得可能？？
+# driver = webdriver.Chrome(r"C:\999_加代子\018_python\chromedriver-win64\chromedriver")
+
+# ChromeDriverのパスをServiceで指定
+service = Service(r"C:\999_加代子\018_python\chromedriver-win64\chromedriver.exe")
+driver = webdriver.Chrome(service=service)  # serviceを使ってdriverを起動
+
+url = "https://www.google.co.jp"
+search_words = 'AI Academy'
+
+# グーグルを開く
+driver.get(url)
+
+### ここから記載　### 
+text = driver.find_element("name", "q") # ID属性から検索用テキストボックスの要素を取得
+
+# 文字列"selenium"をテキストボックスに入力
+text.send_keys(search_words)
+text.submit()
+
+# 【OKバージョン】
+
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+
+# Chromeオプションを設定
+chrome_options = Options()
+chrome_options.binary_location = r"C:\Program Files\Google\Chrome\Application\chrome.exe"  # Chromeのインストールパス
+
+service = Service(r"C:\999_加代子\018_python\chromedriver-win64\chromedriver.exe")
+driver = webdriver.Chrome(service=service)  # serviceを使ってdriverを起動
+
+url = "https://www.google.co.jp"
+search_words = 'AI Academy'
+
+# グーグルを開く
+driver.get(url)
+
+### ここから記載　### 
+#APjFqb
+text = driver.find_element("name", "q") # ID属性から検索用テキストボックスの要素を取得
+
+# 文字列"selenium"をテキストボックスに入力
+text.send_keys(search_words)
+text.submit()
+
+# 【OKバージョン】NG⇒chromeを更新したところOK
+
+### ここから記載　### 
+from selenium import webdriver # Selenium Webdriverをインポートして
+from selenium.webdriver.common.keys import Keys as keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome import service # 追加
+
+# installで、適切なChromeDriverがローカルにキャッシュされていればそれを利用し、無ければダウンロード
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service)
+url = "https://www.google.co.jp"
+search_words = 'AI Academy'
+
+# グーグルを開く
+driver.get(url)
+text = driver.find_element("name", "q") # ID属性から検索用テキストボックスの要素を取得
+# 文字列"selenium"をテキストボックスに入力
+text.send_keys(search_words)
+text.submit()
+
+# # テキストを取得する
+# print(driver.find_element(By.ID, "reviewDialog"))
+# # 属性を取得する
+# print(driver.find_element(By.ID, "reviewDialog").get_attribute("data-async-context"))
+# # タイトルを取得する
+# print(driver.title)
+# # 待ち時間（秒）を設定
+# driver.implicitly_wait(3)
+# # ページのソースを取得する
+# print(driver.page_source)
+
+
+
+# 【問題2 Twitterに自動ログインするプログラムを作成してください】
+
+ヒント1: implicitly_wait(10) にて、暗黙的待機を実施して、JavaScriptなどのプログラムの実行が終わるまで待機させてください。<br>
+implicitly_waitの引数に秒数を指定する際に、環境によっては、小さい数値を指定する場合要素が見つからず、NoSuchElementException になる場合があります。そのためなるべく10など大きい秒数を指定すると良いです。
+
+ヒント2:find_element_by_css_selector()でusernameフィールド及び、パスワードフィールドを取得してください。<br>
+
+ヒント３:send_keys(keys.ENTER)にてログインボタンを押してください。
+
+※セキュリティの観点から、任意のEmailと適当なパスワードでTwitterアカウントの捨て垢を作成ください。<br>
+# 解答を修正したバージョン
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import pandas as pd
+# from selenium.webdriver.chrome import service
+
+# ユーザ名とパスをCSVから取得
+df = pd.read_csv("./idpw.csv", nrows=2)
+user = df.iloc[0, 0]
+pw = df.iloc[1, 0]
+
+# Chromeを動かすドライバを読み込み
+service = Service(r"C:\999_加代子\018_python\chromedriver-win64\chromedriver.exe")
+driver = webdriver.Chrome(service=service)  # serviceを使ってdriverを起動
+
+# URLの指定
+url = "https://twitter.com/login"
+
+# TwitterのURLにアクセス
+driver.get(url)
+
+### ここから記載　### 
+driver.implicitly_wait(5)
+
+# ユーザ名
+username = driver.find_element(By.NAME, "text") 
+username.send_keys(user)
+username.send_keys(Keys.ENTER)
+
+# PW
+password  = driver.find_element(By.NAME, "password") 
+password.send_keys(pw)
+password.send_keys(Keys.ENTER)
+# 【問題3 】
+
+下記のアンケートフォームを自動で入力するプログラムを作成してください。
+
+https://docs.google.com/forms/d/e/1FAIpQLScMwPxxPJKfv-qAowTyM0mEBugsWar1NPY7nTsvqG7U_d04-w/viewform
+
+# browser_auto_foods.py
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+
+# 検索ワード入力
+def set_input_text(name, input_text, index=0):
+    text = driver.find_elements(By.CLASS_NAME, name)
+    text[index].send_keys(input_text) 
+
+url = 'https://docs.google.com/forms/d/e/1FAIpQLScMwPxxPJKfv-qAowTyM0mEBugsWar1NPY7nTsvqG7U_d04-w/viewform'
+
+# driver = webdriver.Chrome("/Users/cyberbrain/chromedriver")
+# Chromeを動かすドライバを読み込み
+service = Service(r"C:\999_加代子\018_python\chromedriver-win64\chromedriver.exe")
+driver = webdriver.Chrome(service=service)  # serviceを使ってdriverを起動
+
+driver.get(url)
+
+email = "test@cyberbra.in"
+test1 = "回答1を入力しました"
+test2 = 1
+test3 = "回答3を入力しました"
+
+### ここから記載　### 
+driver.implicitly_wait(5)
+
+# メールアドレス
+set_input_text("whsOnd", email)
+
+# テスト1
+set_input_text("whsOnd", test1, 1)
+
+# 解答（テスト２のラジオボタン設定）⇒エラー発生
+# test_2 = driver.find_element(By.CSS_SELECTOR, '#i15 > div.vd3tt > div > div')
+# test_2.click()
+
+# テスト2
+text2 = driver.find_elements(By.CLASS_NAME, "AB7Lab")    
+text2[test2].click()
+
+# テスト3
+set_input_text("KHxj8b", test3)
+
+# 送信ボタン押下
+send = driver.find_element(By.CLASS_NAME, "NPEfkd")    
+send.click()
+
+driver.implicitly_wait(5)
+
+# # 別の回答を送信
+# other = driver.find_element(By.CSS_SELECTOR, 'body > div.Uc2NEf > div:nth-child(2) > div.RH5hzf.RLS9Fe > div > div.c2gzEf > a')
+# other.click()
+
+# # メールアドレス
+# set_input_text("whsOnd", 'できた！！')
+
+
+
+
+
+
