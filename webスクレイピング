@@ -1,0 +1,148 @@
+# 【問題1 日経経済新聞のWebサイトから日経平均株価を取得してください。】
+
+・対象Webサイト<br>
+https://www.nikkei.com/markets/kabu/
+
+<img src="https://aiacademy.jp/dataset/kabu1.png" width="800">
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://www.nikkei.com/markets/kabu/"
+
+# 株価の取得
+### ここから記載　### 
+html = requests.get(url)
+soup = BeautifulSoup(html.text, "html.parser")
+
+# ave ="body > div.marketBar_m14rebfg > div > div > div > ul > li:nth-child(1) > div > a > span.marketItemContents_m1dci454 > span.price_p1xu5bmb"
+# 日経平均
+ave ="span.price_p1xu5bmb"
+h1 = soup.select_one(ave)
+
+if h1 is not None:
+    print(f"日経平均：{h1.string }")
+else:
+    print("取得できませんでした！")
+
+
+
+
+
+# 【問題2 Mediaないの全てのaタグ（リンク）とテキストを取得】
+
+AI Academy Mediaからaタグをfind_all()で取得し、全てのリンクとテキストを取得し、出力してください。<br>
+また取得する際に、半角スペースは全て取り除いてください。
+
+https://aiacademy.jp/media/
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+
+url = "https://aiacademy.jp/media/"
+html = urlopen(url)
+data = html.read()
+html = data.decode('utf-8')
+
+soup = BeautifulSoup(html, 'html.parser')
+
+### ここから記載　### 
+# ページ内のすべての<a>タグを取得
+links = soup.find_all("a")
+
+for link in links:
+    href = link.get("href")
+    text = link.text.strip().replace("\n", "")
+    if href and text:
+        print(text)
+        print(href)
+# 【問題3 最新の記事10件の記事名とURLを取得】
+
+AI Academy Mediaから最新の記事10件の記事名とURLを取得<br>
+selcte()を利用してください。
+
+https://aiacademy.jp/media/
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+
+url = "https://aiacademy.jp/media/"
+html = urlopen(url)
+data = html.read()
+html = data.decode('utf-8')
+
+soup = BeautifulSoup(html, 'html.parser')
+
+### ここから記載　### 
+
+links = soup.find_all("a")
+
+for i, link in enumerate(links, start = 1):
+    url = link.get("href")
+    print(f"【No{i}】")
+    print(url)
+    print(link.text.strip().replace("\n", "") )
+    print("")
+    if i == 10:
+        break
+
+# i = 0
+# for link in links:
+#     i += 1
+#     url = link.get("href")
+#     print(url)
+#     print(link.text.strip())
+#     print(i)
+#     if i == 10:
+#             braek
+
+
+
+# 【問題4 取得した記事名とURLをcsvに保存してください】
+
+pandasのDataFrameとSeriesを駆使します。
+csvの保存には、pandasのto_csv()を利用してください。
+from bs4 import BeautifulSoup
+from urllib.request import urlopen
+
+url = "https://aiacademy.jp/media/"
+html = urlopen(url)
+data = html.read()
+html = data.decode('utf-8')
+
+soup = BeautifulSoup(html, 'html.parser')
+
+import pandas as pd
+
+# 初期化
+i = 0
+
+# 空のデータフレームを作成
+df = pd.DataFrame( columns=["title", "url"])
+
+### ここから記載　### 
+links = soup.find_all("a")
+
+for link in links:
+    text = link.text.strip().replace("\n", "") 
+    url = link.get("href")
+    
+    # 元のコード
+    # s1 = pd.Series([text, url], index=columns)
+    # df = pd.concat([df, pd.DataFrame(s1)], ignore_index=True)
+
+    # タイトルとURLの両方がある場合
+    if text and url:
+        s1 = pd.DataFrame([[text, url]], columns=["title", "url"])
+        
+        # ignore_index=Trueを指定してインデックスが重複しないようにし、連番でインデックスが振られる
+        df = pd.concat([df, s1], ignore_index=True)
+        i += 1
+
+# CSVファイルに保存
+file_name = "url.csv"
+
+# index=Falseでインデックスの列は保存しない
+df.to_csv(file_name, encoding="utf-8", index=False)
+print(f"{file_name}に{i}件出力しました")
+
+アウトプットcsvのイメージ<br>
+※以下の画像では、50件分<br>
+<img src="https://aiacademy.jp/dataset/output1.png" width="800">
